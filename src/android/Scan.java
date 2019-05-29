@@ -56,6 +56,37 @@ public class Scan extends CordovaPlugin {
                 }
                 Intent intent = new Intent(cordova.getActivity().getApplicationContext(), ScanActivity.class);
                 intent.putExtra(ScanConstants.OPEN_INTENT_PREFERENCE, preference);
+                intent.putExtra(ScanConstants.OPEN_SCAN, true);
+                cordova.getActivity().startActivityForResult(intent, REQUEST_CODE);
+            } catch (IllegalArgumentException e) {
+                this.callbackContext.error("Illegal Argument Exception");
+                PluginResult r = new PluginResult(PluginResult.Status.ERROR);
+                this.callbackContext.sendPluginResult(r);
+            }
+
+            return true;
+
+        } else if (action.equals("photo")) {
+
+            this.srcType = CAMERA;
+
+            //Take the values from the arguments if they're not already defined (this is tricky)
+            this.srcType = args.getInt(0);
+
+            this.callbackContext = callbackContext;
+
+            cordova.setActivityResultCallback(this);
+
+            int preference = 0;
+            try {
+                if (this.srcType == CAMERA) {
+                    preference = ScanConstants.OPEN_CAMERA;
+                } else if (this.srcType == PHOTOLIBRARY) {
+                    preference = ScanConstants.OPEN_MEDIA;
+                }
+                Intent intent = new Intent(cordova.getActivity().getApplicationContext(), ScanActivity.class);
+                intent.putExtra(ScanConstants.OPEN_INTENT_PREFERENCE, preference);
+                intent.putExtra(ScanConstants.OPEN_SCAN, false);
                 cordova.getActivity().startActivityForResult(intent, REQUEST_CODE);
             } catch (IllegalArgumentException e) {
                 this.callbackContext.error("Illegal Argument Exception");
